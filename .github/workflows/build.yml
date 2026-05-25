@@ -4,9 +4,8 @@ on:
     paths-ignore:
       - "**.md"
   workflow_dispatch:
-
 jobs:
-  build:
+  bluebuild:
     name: Build Nexus OS
     runs-on: ubuntu-latest
     permissions:
@@ -16,19 +15,10 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+      - name: Build and push Image
+        uses: blue-build/github-action@v1.8
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Instalar BlueBuild CLI
-        run: |
-          wget -qO- https://blue-build.org/install.sh | bash
-
-      - name: Build and Push Image
-        run: |
-          # Compila o sistema operacional burlado a exigencia de assinatura
-          /usr/local/bin/bluebuild build --no-sign --push recipe.yml
+          recipe: recipe.yml
+          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
+          registry_token: ${{ github.token }}
+          pr_event_number: ${{ github.event.number }}
