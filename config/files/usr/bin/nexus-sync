@@ -1,11 +1,40 @@
 #!/bin/bash
-echo "Sincronizando ambiente NEXUS..."
-if [ -d "$HOME/NEXUS" ]; then
-    echo "Atualizando NEXUS existente..."
-    cd "$HOME/NEXUS" && git pull
-else
-    echo "Clonando NEXUS pela primeira vez..."
-    # Substitua depois pela URL real do seu repo
-    git clone https://github.com/bbanho/NEXUS.git "$HOME/NEXUS" 2>/dev/null || echo "Edite o script para apontar para o repo correto!"
+set -e
+echo "========================================"
+echo "  Iniciando Sincronizacao do NEXUS OS"
+echo "========================================"
+
+# Verifica se a chave SSH existe (necessario para repo privado)
+if [ ! -f "$HOME/.ssh/id_rsa" ] && [ ! -f "$HOME/.ssh/id_ed25519" ]; then
+    echo "⚠️ AVISO: Chave SSH nao encontrada!"
+    echo "O NEXUS é um repositorio privado. Gere sua chave SSH primeiro:"
+    echo "  ssh-keygen -t ed25519"
+    echo "  cat ~/.ssh/id_ed25519.pub  (Cole isso nas chaves do seu GitHub)"
+    echo "Depois de adicionar a chave no GitHub, rode 'nexus-sync' novamente."
+    exit 1
 fi
-echo "Nexus pronto para uso!"
+
+if [ -d "$HOME/NEXUS" ]; then
+    echo "[1/2] Atualizando NEXUS existente..."
+    cd "$HOME/NEXUS"
+    git pull
+else
+    echo "[1/2] Clonando NEXUS pela primeira vez..."
+    cd "$HOME"
+    git clone git@github.com:bbanho/NEXUS.git
+    cd NEXUS
+fi
+
+echo "[2/2] Levantando os containers do NEXUS via Compose..."
+# O Bluefin/Fedora lida bem com docker-compose ou o comando docker compose moderno
+if docker compose version &> /dev/null; then
+    docker compose up -d
+elif command -v podman-compose &> /dev/null; then
+    podman-compose up -d
+else
+    echo "⚠️ Nenhum comando compose encontrado."
+fi
+
+echo "========================================"
+echo "  NEXUS atualizado e rodando! 🚀"
+echo "========================================"
