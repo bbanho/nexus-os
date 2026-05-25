@@ -4,7 +4,10 @@ if [ ! -f "$HOME/.nexus_os_initialized" ]; then
     echo "🚀 Bem-vindo ao Nexus OS! (Configuracao Inicial)"
     echo "Baixando dependencias no Homebrew (OpenCode)..."
     echo "==================================================="
-    
+
+    # Garante que o brew está no PATH (necessário no profile.d)
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
     # O Homebrew instala automaticamente
     brew install opencode
     
