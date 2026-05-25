@@ -10,9 +10,6 @@ modules:
       - nodejs
       - npm
 
-  - type: script
-    scripts:
-      - setup-opencode.sh
 
   - type: files
     files:
