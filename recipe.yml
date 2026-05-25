@@ -1,0 +1,19 @@
+name: nexus-os
+description: Nexus OS - Ambiente de Desenvolvimento Agentic OMO
+
+base-image: ghcr.io/ublue-os/bluefin-dx
+image-version: latest
+
+modules:
+  - type: rpm-ostree
+    install:
+      - nodejs
+      - npm
+
+  - type: script
+    scripts:
+      - setup-opencode.sh
+
+  - type: files
+    files:
+      - usr: /usr

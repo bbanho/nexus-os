@@ -1,0 +1,11 @@
+#!/bin/bash
+echo "Sincronizando ambiente NEXUS..."
+if [ -d "$HOME/NEXUS" ]; then
+    echo "Atualizando NEXUS existente..."
+    cd "$HOME/NEXUS" && git pull
+else
+    echo "Clonando NEXUS pela primeira vez..."
+    # Substitua depois pela URL real do seu repo
+    git clone https://github.com/bbanho/NEXUS.git "$HOME/NEXUS" 2>/dev/null || echo "Edite o script para apontar para o repo correto!"
+fi
+echo "Nexus pronto para uso!"

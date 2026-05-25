@@ -1,0 +1,24 @@
+name: bluebuild
+on:
+  push:
+    paths-ignore:
+      - "**.md"
+  workflow_dispatch:
+jobs:
+  bluebuild:
+    name: Build Nexus OS
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Build and push Image
+        uses: blue-build/github-action@v1.6
+        with:
+          recipe: recipe.yml
+          no_sign: true
+          registry_token: ${{ github.token }}
+          pr_event_number: ${{ github.event.number }}
